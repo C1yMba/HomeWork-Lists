@@ -1,10 +1,9 @@
 package pro.sky.professionsspringdemo;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
 import java.util.List;
 
 @RestController
@@ -23,6 +22,7 @@ public class EmployeeController {
     }
 
     @GetMapping(path = "/remove")
+    @ResponseStatus(HttpStatus.EXPECTATION_FAILED)
     public Employee removeEmployee(@RequestParam(required = false) String firstName, @RequestParam(required = false) String lastName) {
         return employee.removeEmployee(firstName,lastName);
     }
@@ -32,7 +32,7 @@ public class EmployeeController {
         return employee.findEmployee(firstName, lastName);
     }
     @GetMapping(path = "/printAll")
-    public List<Employee> findEmployee() {
+    public Collection<Employee> findEmployee() {
         return employee.printAll();
     }
 

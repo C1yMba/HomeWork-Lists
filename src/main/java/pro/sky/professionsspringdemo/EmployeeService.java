@@ -1,11 +1,11 @@
 package pro.sky.professionsspringdemo;
 
-import java.util.List;
+import java.util.Collection;
 
 public interface EmployeeService {
     Employee addEmployee(String firstName, String lastName);
     Employee removeEmployee(String firstName, String lastName);
     Employee findEmployee(String firstName, String lastName);
 
-    List<Employee> printAll();
+    Collection<Employee> printAll();
 }
