@@ -31,10 +31,7 @@ public class EmployeeController {
     public Employee findEmployee(@RequestParam(required = false) String firstName, @RequestParam(required = false) String lastName) {
         return employee.findEmployee(firstName, lastName);
     }
-    @GetMapping(path = "/printAll")
-    public Collection<Employee> findEmployee() {
-        return employee.printAll();
-    }
+
 
 
 }
