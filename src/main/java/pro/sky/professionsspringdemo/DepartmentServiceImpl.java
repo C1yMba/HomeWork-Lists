@@ -4,192 +4,57 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
-
 @Service
 public class DepartmentServiceImpl implements DepartmentService {
-        private final int numberOfEmployees = 10;
-        List<Employee> employees = new ArrayList<>(List.of(
-                new Employee("Вася", "Пупкин",2,10000),
-                new Employee("Дима", "Капустин",2,15000),
-                new Employee("Вася", "Кирилин",3,12000),
-                new Employee("Христофор", "Иванов",4,15000)
-        ));
-        @Override
-        public List<String> printAllEmployees() {
-                if (employees.isEmpty()){
-                        throw new StorageOfEmployeesEmptyException("Отсутствуют сотрудники в компании");
-                } else {
-                        Map<Integer, List<Employee>> employeesByDepartment = employees.stream()
-                                .collect(Collectors.groupingBy(Employee::getDepartment));
-                        List<String> result = new ArrayList<>();
-                        employeesByDepartment.forEach((department, employeesInDept) -> {
-                                result.add("Отдел " + department + ":");
-                                employeesInDept.forEach(emp -> result.add(emp.toString()));
-                                result.add("---");
-                        });
+    private EmployeeService employeeService;
+    private List<Employee> employees;
+    public DepartmentServiceImpl(EmployeeService employeeService) {
+        this.employeeService = employeeService;
+        employees = employeeService.returnAllEmployees();
+    }
 
-                        return result;
-                        }
-        }
-        @Override
-        public List<Employee> printAllEmployeesDepartment(int department) {
-                List<Employee> employeesInDepartment = employees.stream()
-                        .filter(p -> p.getDepartment() == department)
-                        .collect(Collectors.toList());
-                if (employeesInDepartment.isEmpty()) {
-                        throw new NoSuchElementException("Отдел с номером " + department + " не найден или в нем нет сотрудников");
-                }
-                return  employeesInDepartment;
-        }
-        @Override
-        public double getAllSalariesCost() {
-                return employees.stream()
-                        .filter(Objects::nonNull)
-                        .mapToDouble(Employee::getEmployeeSalary)
-                        .sum();
-        }
+    @Override
+    public List<String> printAllEmployees() {
+        if (employees.isEmpty()){
+            throw new StorageOfEmployeesEmptyException("Отсутствуют сотрудники в компании");
+        } else {
+            Map<Integer, List<Employee>> employeesByDepartment = employees.stream()
+                    .collect(Collectors.groupingBy(Employee::getDepartment));
+            List<String> result = new ArrayList<>();
+            employeesByDepartment.forEach((department, employeesInDept) -> {
+                result.add("Отдел " + department + ":");
+                employeesInDept.forEach(emp -> result.add(emp.toString()));
+                result.add("---");
+            });
 
-        @Override
-        public Employee getMinSalary() {
-               return employees.stream()
-                        .filter(Objects::nonNull)
-                        .min(Comparator.comparingDouble(Employee::getEmployeeSalary))
-                        .orElse(null);
+            return result;
         }
-        @Override
-        public Employee getMaxSalary() {
-                return employees.stream()
-                        .filter(Objects::nonNull)
-                        .max(Comparator.comparingDouble(Employee::getEmployeeSalary))
-                        .orElse(null);
+    }
+    @Override
+    public List<Employee> printAllEmployeesDepartment(int department) {
+        List<Employee> employeesInDepartment = employees.stream()
+                .filter(p -> p.getDepartment() == department)
+                .collect(Collectors.toList());
+        if (employeesInDepartment.isEmpty()) {
+            throw new NoSuchElementException("Отдел с номером " + department + " не найден или в нем нет сотрудников");
         }
-        @Override
-        public OptionalDouble getMediumSalariesCost() {
-                return employees.stream()
-                        .filter(Objects::nonNull)
-                        .mapToDouble(Employee::getEmployeeSalary)
-                        .average();
-        }
-        @Override
-        public List<String> getNames() {
-               return employees.stream()
-                        .filter(Objects::nonNull)
-                        .map(
-                       (p -> p.getFirstName() + " " + p.getLastName())
-                ).collect(Collectors.toList());
-        }
-        @Override
-        public void indexAllSalaries(double percent) {
-                employees.stream()
-                        .filter(Objects::nonNull)
-                        .map(p -> {
-                                double newSalary = p.getEmployeeSalary() * (1 + (percent / 100.0));
-                                p.setEmployeeSalary(newSalary);
-                                return p;
-                        });
-        }
-        @Override
-        public Employee getDepartmentMinSalary(int department) {
-                return employees.stream()
-                        .filter(Objects::nonNull)
-                        .filter(p -> p.getDepartment() == department)
-                        .min(Comparator.comparingDouble(Employee::getEmployeeSalary))
-                        .orElseThrow(() -> new NoSuchElementException("Отдел с номером " + department + " не найден или в нем нет сотрудников"));
-        }
-        @Override
-        public Employee getDepartmentMaxSalary(int department) {
-                return employees.stream()
-                        .filter(Objects::nonNull)
-                        .filter(p -> p.getDepartment() == department)
-                        .max(Comparator.comparingDouble(Employee::getEmployeeSalary))
-                        .orElseThrow(() -> new NoSuchElementException("Отдел с номером " + department + " не найден или в нем нет сотрудников"));
-        }
-        @Override
-        public double getDepartmentSumSalary(int department) {
-                return employees.stream()
-                        .filter(Objects::nonNull)
-                        .filter(p -> p.getDepartment() == department)
-                        .mapToDouble(Employee::getEmployeeSalary)
-                        .sum();
-        }
-        @Override
-        public OptionalDouble getDepartmentAverageSalary(int department) {
-                return employees.stream()
-                        .filter(Objects::nonNull)
-                        .filter(p -> p.getDepartment() == department)
-                        .mapToDouble(Employee::getEmployeeSalary)
-                        .average();
-        }
-        @Override
-        public void indexDepartmentSalaries(int department, double percent) {
-                employees.stream()
-                        .filter(Objects::nonNull)
-                        .filter(p -> p.getDepartment() == department)
-                        .map(p -> {
-                                double newSalary = p.getEmployeeSalary() * (1 + (percent / 100.0));
-                                p.setEmployeeSalary(newSalary);
-                                return p;
-                        });
-        }
-
-        @Override
-        public List<Employee> getLessSalary(int number) {
-                System.out.println("Сотруники с зп поменьше: ");
-                 return (List<Employee>) employees.stream()
-                         .filter(p -> p.getEmployeeSalary() < number);
-        }
-        @Override
-        public List<Employee> getMoreSalary(int number) {
-                System.out.println("Сотрудники с зп побольше:");
-                return (List<Employee>) employees.stream()
-                        .filter(p -> p.getEmployeeSalary() > number);
-        }
-
-
-        @Override
-        public Employee addEmployee(String firstName, String lastName, int department, double salary) {
-                if (employees.size() == numberOfEmployees) {
-                        throw new EmployeeStorageIsFullException("Company is staffed");
-                }
-
-                Employee employee = new Employee(firstName, lastName, department, salary);
-                employees.stream()
-                        .filter(e -> e.equals(employee))
-                        .findAny()
-                        .ifPresent(e -> {
-                                throw new EmployeeAlreadyAddedException("Employee is already added in list!");
-                        });
-
-                employees.add(employee);
-                return employee;
-        }
-
-        @Override
-        public Employee removeEmployee(String firstName, String lastName, int department, double salary) {
-                Employee employee = new Employee(firstName, lastName, department, salary);
-                Optional<Employee> foundEmployee = employees.stream()
-                        .filter(e -> e.equals(employee))
-                        .findAny();
-
-                if (foundEmployee.isPresent()) {
-                        employees.remove(employee);
-                        return employee;
-                } else {
-                        throw new EmployeeNotFoundException("Сотрудник с именем " + firstName + " и фамилией " + lastName + " не был найден!");
-                }
-        }
-
-        @Override
-        public Employee findEmployee(String firstName, String lastName, int department, double salary){
-                Employee employee = new Employee(firstName, lastName, department, salary);
-                Optional<Employee> foundEmployee = employees.stream()
-                        .filter(e -> e.equals(employee))
-                        .findAny();
-                if (foundEmployee.isPresent()) {
-                        return employee;
-                } else {
-                        throw new EmployeeNotFoundException("Сотрудник с именем " + firstName + " и фамилией " + lastName + " не был найден!");
-                }
-        }
+        return  employeesInDepartment;
+    }
+    @Override
+    public Employee getDepartmentMinSalary(int department) {
+        return employees.stream()
+                .filter(Objects::nonNull)
+                .filter(p -> p.getDepartment() == department)
+                .min(Comparator.comparingDouble(Employee::getEmployeeSalary))
+                .orElseThrow(() -> new NoSuchElementException("Отдел с номером " + department + " не найден или в нем нет сотрудников"));
+    }
+    @Override
+    public Employee getDepartmentMaxSalary(int department) {
+        return employees.stream()
+                .filter(Objects::nonNull)
+                .filter(p -> p.getDepartment() == department)
+                .max(Comparator.comparingDouble(Employee::getEmployeeSalary))
+                .orElseThrow(() -> new NoSuchElementException("Отдел с номером " + department + " не найден или в нем нет сотрудников"));
+    }
 
 }
