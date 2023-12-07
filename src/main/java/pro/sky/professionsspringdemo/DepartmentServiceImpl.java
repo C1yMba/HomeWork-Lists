@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 public class DepartmentServiceImpl implements DepartmentService {
     private EmployeeService employeeService;
     private List<Employee> employees;
-
     public DepartmentServiceImpl(EmployeeService employeeService) {
         this.employeeService = employeeService;
         employees = employeeService.returnAllEmployees();

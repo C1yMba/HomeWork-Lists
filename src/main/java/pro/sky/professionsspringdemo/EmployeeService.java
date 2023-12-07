@@ -6,7 +6,6 @@ import java.util.OptionalDouble;
 public interface EmployeeService {
     double getAllSalariesCost();
     Employee getMinSalary();
-
     Employee getMaxSalary();
     OptionalDouble getMediumSalariesCost();
     List<String> getNames();
