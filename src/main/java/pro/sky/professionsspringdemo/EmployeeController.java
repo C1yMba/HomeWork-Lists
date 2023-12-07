@@ -25,6 +25,7 @@ public class EmployeeController {
                                    @RequestParam int department, @RequestParam double salary) {
         return employee.removeEmployee(firstName,lastName,department,salary);
     }
+
     @GetMapping(path = "/find")
     public Employee findEmployee(@RequestParam String firstName, @RequestParam String lastName,
                                  @RequestParam int department, @RequestParam double salary) {
