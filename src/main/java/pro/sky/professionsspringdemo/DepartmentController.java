@@ -15,6 +15,8 @@ public class DepartmentController {
         this.employee = employee;
     }
 
+
+
     @GetMapping(path = "/max-salary")
     public Employee getDepartmentMaxSalary(@RequestParam int departmentId) {
         return employee.getDepartmentMaxSalary(departmentId);

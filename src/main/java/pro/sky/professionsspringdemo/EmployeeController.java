@@ -19,7 +19,6 @@ public class EmployeeController {
                                 @RequestParam int department, @RequestParam double salary) {
         return employee.addEmployee(firstName,lastName,department,salary);
     }
-
     @GetMapping(path = "/remove")
     @ResponseStatus(HttpStatus.EXPECTATION_FAILED)
     public Employee removeEmployee(@RequestParam String firstName, @RequestParam String lastName,
