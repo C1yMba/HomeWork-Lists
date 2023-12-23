@@ -8,6 +8,8 @@ import java.util.stream.Collectors;
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
 
+        private final ValidationService validationService;
+
         private final int numberOfEmployees = 10;
         List<Employee> employees = new ArrayList<>(List.of(
                 new Employee("Вася", "Пупкин",2,10000),
@@ -15,6 +17,11 @@ public class EmployeeServiceImpl implements EmployeeService {
                 new Employee("Вася", "Кирилин",3,12000),
                 new Employee("Христофор", "Иванов",4,15000)
         ));
+
+        public EmployeeServiceImpl(ValidationService validationService) {
+                this.validationService = validationService;
+        }
+
         @Override
         public List<Employee> returnAllEmployees() {
                 if (employees.isEmpty()){
@@ -118,7 +125,11 @@ public class EmployeeServiceImpl implements EmployeeService {
                         throw new EmployeeStorageIsFullException("Company is staffed");
                 }
 
-                Employee employee = new Employee(firstName, lastName, department, salary);
+                Employee employee = new Employee(
+                        validationService.validate(firstName),
+                        validationService.validate(lastName),
+                        department,
+                        salary);
                 employees.stream()
                         .filter(e -> e.equals(employee))
                         .findAny()
